@@ -10,11 +10,12 @@ namespace CSharpCodeGenerator.Builders
         private AccessModifier _accessModifier;
         private bool _isAuto;
 
-        public PropertyBuilder()
+        private PropertyBuilder()
         {
             _accessModifier = AccessModifier.Public;
         }
 
+        public static PropertyBuilder AddProperty(string name) => new PropertyBuilder().Name(name);
         public PropertyBuilder Type(string type)
         {
             _type = type;

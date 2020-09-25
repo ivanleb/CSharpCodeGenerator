@@ -37,6 +37,12 @@ namespace CSharpCodeGenerator.Builders
             return new MethodBuilder();
         }
 
+        public static MethodBuilder AddMethod(string name)
+        {
+            var method = new MethodBuilder();
+            return method.Name(name);            
+        }
+
         public MethodBuilder AddParameter(string type, string name, ParameterModifier modifier)
         {
             var parameter = new Parameter(type, name, modifier);

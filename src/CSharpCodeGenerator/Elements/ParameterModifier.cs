@@ -35,7 +35,7 @@ namespace CSharpCodeGenerator.Elements
 
         public override string ToString()
         {
-            return _modifier.ToString();
+            return _modifier == Modifier.none ? "" : _modifier.ToString();
         }
     }
 }

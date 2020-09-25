@@ -17,5 +17,10 @@ namespace CSharpCodeGenerator.Elements
         public string Type { get;}
         public string Name { get;}
         public ParameterModifier  ParameterModifier {get; }
+
+        public override string ToString()
+        {
+            return $"{ParameterModifier} {Type} {Name}";
+        }
     }
 }

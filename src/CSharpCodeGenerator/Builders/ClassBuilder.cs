@@ -13,7 +13,8 @@ namespace CSharpCodeGenerator.Builders
         private readonly List<PropertyBuilder> _properties = new List<PropertyBuilder>();
         private readonly List<ConstructorBuilder> _constructors = new List<ConstructorBuilder>();
         private readonly List<MethodBuilder> _methods = new List<MethodBuilder>();
-
+        private readonly List<InterfaceBuilder> _interfaces = new List<InterfaceBuilder>();
+        private string _ancesorType = "";
         private string _name;
 
         private ClassBuilder(string name)
@@ -29,6 +30,12 @@ namespace CSharpCodeGenerator.Builders
         public ClassBuilder AddField(FieldBuilder builder)
         {
             _fields.Add(builder);
+            return this;
+        }
+
+        public ClassBuilder AddFields(params FieldBuilder[] builders)
+        {
+            _fields.AddRange(builders);
             return this;
         }
 
@@ -50,12 +57,27 @@ namespace CSharpCodeGenerator.Builders
             return this;
         }
 
+        public ClassBuilder AddAncesor(string ancesorType)
+        {
+            if(String.IsNullOrEmpty(_ancesorType))
+                _ancesorType = ancesorType;
+            return this;
+        }
+
+        public ClassBuilder Implement(InterfaceBuilder interfaceBuilder)
+        {
+            _interfaces.Add(interfaceBuilder);
+            return this;
+        }
+
         public Class Build() 
         {
             var @class = new Class(_name);
 
             @class.Fields.UnionWith(_fields.Select(builder => builder.Build()));
             @class.Properties.UnionWith(_properties.Select(builder => builder.Build()));
+            @class.Methods.UnionWith(_methods.Select(builder => builder.Build()));
+            @class.ImplementedInterfaces.UnionWith(_interfaces.Select(builder => builder.Build()));
             @class.Constructors.UnionWith(
                 _constructors.Select(builder => builder
                     .Name(@class.Name)

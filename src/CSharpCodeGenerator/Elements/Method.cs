@@ -1,6 +1,8 @@
-﻿using CSharpCodeGenerator.Types;
+﻿using CSharpCodeGenerator.Builders;
+using CSharpCodeGenerator.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace CSharpCodeGenerator.Elements
@@ -12,6 +14,16 @@ namespace CSharpCodeGenerator.Elements
             : base(accessModifier, returnType, name)
         {
             _parameters.AddRange(parameters);
+        }
+
+        public static MethodBuilder Add(string name) => MethodBuilder.AddMethod(name);
+
+        public override string ToString()
+        {
+            return $@"{AccessModifier} {Type} {Name}({ _parameters.Select(prop => prop.ToString()).Aggregate((acc, arg) => acc + "," + arg)}) 
+            {{
+                return default({Type});
+            }}";
         }
     }
 }

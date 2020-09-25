@@ -1,4 +1,5 @@
-﻿using CSharpCodeGenerator.Types;
+﻿using CSharpCodeGenerator.Builders;
+using CSharpCodeGenerator.Types;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ namespace CSharpCodeGenerator.Elements
 
         public override string ToString()
         {
-            return $"{AccessModifier} {Type} {Name};";
+            return $"            {AccessModifier} {Type} {Name};";
         }
 
         public Field(AccessModifier accessModifier, string type, string name, bool isReadonly)
@@ -22,5 +23,7 @@ namespace CSharpCodeGenerator.Elements
         }
 
         public bool IsReadonly { get; }
+
+        public static FieldBuilder Add(string name) => FieldBuilder.AddField(name);
     }
 }

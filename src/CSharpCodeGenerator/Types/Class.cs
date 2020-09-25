@@ -1,4 +1,5 @@
-﻿using CSharpCodeGenerator.Elements;
+﻿using CSharpCodeGenerator.Builders;
+using CSharpCodeGenerator.Elements;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace CSharpCodeGenerator.Types
         public AccessModifier AccessModifier { get; } = AccessModifier.Public;
         public bool IsStatic { get; }
         public string Name { get; }
-        public Class AncestorType { get; } 
+        public string AncestorType { get; } = "";
         public HashSet<Interface> ImplementedInterfaces { get; } = new HashSet<Interface>();
         public HashSet<Field> Fields { get; } = new HashSet<Field>();
         public HashSet<Method> Methods { get; } = new HashSet<Method>();
@@ -27,31 +28,28 @@ namespace CSharpCodeGenerator.Types
         public override string ToString()
         {
             string isStatic = IsStatic ? "static" : "";
-            StringBuilder sb = new StringBuilder();
-            sb.AppendJoin(',', AncestorType?.Name, ImplementedInterfaces.Select(i => i.Name).ToArray());
-            string inheritence = sb.Length != 0 ? ": " + sb.ToString().Remove(0,1) : "";
+            string inheritence = new string[] { AncestorType }.Concat(ImplementedInterfaces.Select(i => i.Name)).Aggregate((acc, arg) => acc + ", " + arg);
+            inheritence = inheritence.Any() ? ": " + inheritence : inheritence;
 
-            StringBuilder fieldSb = new StringBuilder();
-            fieldSb.AppendJoin('\n', Fields.Select(f => f.ToString()).ToArray());
+            StringBuilder fieldSb = new StringBuilder().AppendJoin('\n', Fields.Select(f => f.ToString()).ToArray());
 
-            StringBuilder constructorSb = new StringBuilder();
-            constructorSb.AppendJoin('\n', Constructors.Select(f => f.ToString()).ToArray());
+            StringBuilder constructorSb = new StringBuilder().AppendJoin('\n', Constructors.Select(f => f.ToString()).ToArray());
 
-            StringBuilder propertiesSb = new StringBuilder();
-            propertiesSb.AppendJoin('\n', Properties.Select(f => f.ToString()).ToArray());
+            StringBuilder propertiesSb = new StringBuilder().AppendJoin('\n', Properties.Select(f => f.ToString()).ToArray());
 
-            StringBuilder methodsSb = new StringBuilder();
-            methodsSb.AppendJoin('\n', Methods.Select(f => f.ToString()).ToArray());
+            StringBuilder methodsSb = new StringBuilder().AppendJoin('\n', Methods.Select(f => f.ToString()).ToArray());
 
             return $@"
         {AccessModifier} {isStatic} class {Name} {inheritence}
         {{
-            {fieldSb}
+{fieldSb}
             {constructorSb}
             {propertiesSb}
             {methodsSb}
         }}
         ";
         }
+
+        public static ClassBuilder Add(string name) => ClassBuilder.AddClass(name);
     }
 }

@@ -7,7 +7,7 @@ namespace CSharpCodeGenerator.Builders
 {
     public class ConstructorBuilder
     {
-        private HashSet<Parameter> _parameters = new HashSet<Parameter>();
+        private Dictionary<Parameter, Member> _parameters = new Dictionary<Parameter, Member>();
         private string _name;
         private bool _isStatic;
         private AccessModifier _modifier;
@@ -22,6 +22,7 @@ namespace CSharpCodeGenerator.Builders
             return new ConstructorBuilder();
         }
 
+
         public ConstructorBuilder Name(string name)
         {
             _name = name;
@@ -30,19 +31,26 @@ namespace CSharpCodeGenerator.Builders
 
         public ConstructorBuilder Parameter(string type, string name)
         {
-            return Parameter(new Parameter(type, name, ParameterModifier.None));
+            return Parameter(new Parameter(type, name, ParameterModifier.None), null);
+        }
+
+        public ConstructorBuilder Parameter(string type, string name, string fieldType, string fieldName)
+        {
+            return Parameter(new Parameter(type, name, ParameterModifier.None), new Field(AccessModifier.None, fieldType, fieldName, false));
         }
 
         public ConstructorBuilder Parameter(string type, string name, ParameterModifier parameterModifier)
         {
-            return Parameter(new Parameter(type, name, parameterModifier));
+            return Parameter(new Parameter(type, name, parameterModifier), null);
         }
 
-        private ConstructorBuilder Parameter(Parameter parameter) 
+        private ConstructorBuilder Parameter(Parameter parameter, Field bindedField) 
         { 
-            _parameters.Add(parameter);
+            _parameters.Add(parameter, bindedField);
             return this;
         }
+
+
 
         public ConstructorBuilder Static(bool isStatic)
         {
@@ -52,7 +60,9 @@ namespace CSharpCodeGenerator.Builders
 
         public Constructor Build()
         {
-            return new Constructor(_modifier, _name, _parameters.ToArray()) ;
+            var constructor = new Constructor(_modifier, _name, _parameters.Keys.ToArray());
+            _parameters.Where(p => p.Value != null).ToList().ForEach(p => constructor.Parameter(p.Key, p.Value));
+            return constructor;
         }
     }
 }

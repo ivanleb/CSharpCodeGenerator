@@ -1,4 +1,5 @@
-﻿using CSharpCodeGenerator.Types;
+﻿using CSharpCodeGenerator.Builders;
+using CSharpCodeGenerator.Types;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
@@ -26,5 +27,7 @@ namespace CSharpCodeGenerator.Elements
 
         public override string Type => _field.Type;
         public override string Name => _field.Name;
+
+        public static PropertyBuilder Add(string name) => PropertyBuilder.AddProperty(name);
     }
 }
